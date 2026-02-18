@@ -1,4 +1,5 @@
 export type Chat = {
   readonly id: string
-  createdAt: number
+  createdAt: number,
+  members: string[]
 }
