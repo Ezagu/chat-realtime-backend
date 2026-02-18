@@ -1,12 +1,12 @@
 import { ChatNotFoundError } from "../errors/ChatNotFoundError.js";
 import { ForbiddenChatAccessError } from "../errors/ForbiddenChatAccessError.js";
 import { UserNotFoundError } from "../errors/UserNotFoundError.js";
-import type { ChatRespository } from "../repositories/ChatRepository.js";
+import type { ChatRepository } from "../repositories/ChatRepository.js";
 import type { MessageRepository } from "../repositories/MessageRepository.js";
 import type { UserRepository } from "../repositories/UserRepository.js";
 
 export class ReadChatMessages {
-  constructor(private chatRepo: ChatRespository, private messageRepo: MessageRepository, private userRepo: UserRepository){}
+  constructor(private chatRepo: ChatRepository, private messageRepo: MessageRepository, private userRepo: UserRepository){}
 
   execute = async({ chatId, identityId }: { chatId: string, identityId: string }) => {
     // Validar que exista el chat

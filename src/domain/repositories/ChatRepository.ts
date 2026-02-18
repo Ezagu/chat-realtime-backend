@@ -1,6 +1,6 @@
 import type { Chat } from "../entities/Chat.js"
 
-export interface ChatRespository {
+export interface ChatRepository {
   create: ({ identityId, friendId }: { identityId: string, friendId: string }) => void
   findByUser: ({ userId }: { userId: string }) => Promise<Chat[]>
   findById: ({ chatId }: { chatId: string }) => Promise<Chat>

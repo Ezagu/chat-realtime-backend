@@ -1,9 +1,9 @@
 import { UserNotFoundError } from "../errors/UserNotFoundError.js";
-import type { ChatRespository } from "../repositories/ChatRepository.js";
+import type { ChatRepository } from "../repositories/ChatRepository.js";
 import type { UserRepository } from "../repositories/UserRepository.js";
 
 export class GetMyChats {
-  constructor(private userRepo: UserRepository, private chatRepo: ChatRespository){}
+  constructor(private userRepo: UserRepository, private chatRepo: ChatRepository){}
 
   execute = async({ identityId }: { identityId: string }) => {
     // Validar que exista el usuario

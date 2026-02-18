@@ -1,10 +1,10 @@
 import { ChatAlreadyExistsError } from "../errors/ChatAlreadyExistsError.js";
 import { UserNotFoundError } from "../errors/UserNotFoundError.js";
-import type { ChatRespository } from "../repositories/ChatRepository.js";
+import type { ChatRepository } from "../repositories/ChatRepository.js";
 import type { UserRepository } from "../repositories/UserRepository.js";
 
 export class CreateChat {
-  constructor(private chatRepo: ChatRespository, private userRepo: UserRepository){}
+  constructor(private chatRepo: ChatRepository, private userRepo: UserRepository){}
 
   execute = async({ identityId, friendId }: { identityId: string, friendId: string }) => {
     // Validar que los usuarios existan
