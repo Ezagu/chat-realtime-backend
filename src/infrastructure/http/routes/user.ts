@@ -1,11 +1,10 @@
 import { Router } from "express"
+import type { UserController } from "../controllers/user.js"
 
-export const userRouter = () => {
+export const userRouter = (userControler: UserController) => {
   const router = Router()
 
-  router.get("/ping", (req, res) => {
-    res.send('pong')
-  })
+  router.post('/register', userControler.register)
   
   return router
 }
