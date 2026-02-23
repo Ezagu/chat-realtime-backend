@@ -3,11 +3,13 @@ import type { UserRepository } from "../repositories/UserRepository.js"
 import { InvalidPasswordError } from "../errors/InvalidPasswordError.js"
 import { UserNotFoundError } from "../errors/UserNotFoundError.js"
 import type { PasswordHasher } from "../services/PasswordHasher.js"
+import type { TokenService } from "../services/TokenService.js"
 
 export class LoginUser{
   constructor(
     private readonly userRepo: UserRepository,
-    private readonly passwordHasher: PasswordHasher
+    private readonly passwordHasher: PasswordHasher,
+    private readonly tokenService: TokenService
   ){}
 
   execute = async(user: UserLogin) => {
@@ -18,8 +20,17 @@ export class LoginUser{
       // Comparar contraseñas
       const comparation = await this.passwordHasher.compare(user.password, userExists.password)
       if(!comparation) throw new InvalidPasswordError()
-  
-      //Loguear usuario
-      return await this.userRepo.login(user);
+
+      //Crear token
+      const accessToken = await this.tokenService.generate({
+        id: userExists.id,
+        username: userExists.username
+      })
+
+      //Devolver token y usuario
+      return {
+        accessToken,
+        user: userExists
+      }
     }
 }
