@@ -1,11 +1,14 @@
-import bcrypt from "bcrypt"
 import type { User, UserLogin } from "../entities/User.js"
 import type { UserRepository } from "../repositories/UserRepository.js"
 import { InvalidPasswordError } from "../errors/InvalidPasswordError.js"
 import { UserNotFoundError } from "../errors/UserNotFoundError.js"
+import type { PasswordHasher } from "../services/PasswordHasher.js"
 
 export class LoginUser{
-  constructor(private userRepo: UserRepository){}
+  constructor(
+    private readonly userRepo: UserRepository,
+    private readonly passwordHasher: PasswordHasher
+  ){}
 
   execute = async(user: UserLogin) => {
       // Validar que exista el usuario
@@ -13,7 +16,7 @@ export class LoginUser{
       if(!userExists) throw new UserNotFoundError()
   
       // Comparar contraseñas
-      const comparation = await bcrypt.compare(user.password, userExists.password)
+      const comparation = await this.passwordHasher.compare(user.password, userExists.password)
       if(!comparation) throw new InvalidPasswordError()
   
       //Loguear usuario
