@@ -1,9 +1,9 @@
+import bcrypt from "bcrypt"
 import type { UserCreate } from "../entities/User.js";
 import { UserAlreadyExistsError } from "../errors/UserAlreadyExistsError.js";
 import type { UserRepository } from "../repositories/UserRepository.js";
-import bcrypt from "bcrypt"
 
-export class RegisterUser {
+export class RegisterUser{
   constructor(private userRepo: UserRepository){}
 
   execute = async(user: UserCreate) => {

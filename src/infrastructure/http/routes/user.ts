@@ -1,10 +1,14 @@
 import { Router } from "express"
 import type { UserController } from "../controllers/user.js"
 
-export const userRouter = (userControler: UserController) => {
+export const userRouter = (userController: UserController) => {
   const router = Router()
 
-  router.post('/register', userControler.register)
+  router.post('/register', userController.register)
+  router.post('/login', userController.login)
+
+  router.get('/', userController.find)
+  router.get('/:id', userController.findById)
   
   return router
 }

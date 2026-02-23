@@ -1,5 +1,5 @@
 import z from "zod";
-import type { UserCreate } from "../../../domain/entities/User.js";
+import type { UserCreate, UserLogin } from "../../../domain/entities/User.js";
 
 const UserSchema = z.object({
   username: z
@@ -12,6 +12,6 @@ const UserSchema = z.object({
             .nonempty("Ingrese una contraseña")
 })
 
-export const validateUser = (object: UserCreate) => {
+export const validateUser = (object: UserCreate | UserLogin) => {
   return UserSchema.safeParse(object);
 }
