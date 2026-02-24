@@ -7,8 +7,8 @@ export const chatRouter = (
 ) => {
   const router = Router()
   
-  router.get('/', auth)
-  router.get('/:id/messages', auth)
+  router.get('/', auth, chatController.findMyChats)
+  router.get('/:id/messages', auth, chatController.findMessages)
   
   return router
 }

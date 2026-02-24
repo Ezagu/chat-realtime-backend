@@ -11,7 +11,6 @@ export class JwtTokenService implements TokenService {
   }
 
   verify = async (token: string) => {
-    console.log(token)
     return jwt.verify(token, this.secret)
   }
 }

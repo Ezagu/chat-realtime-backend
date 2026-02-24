@@ -25,7 +25,8 @@ export class LoginUser{
       //Crear token
       const accessToken = await this.tokenService.generate({
         id: userExists.id,
-        username: userExists.username
+        username: userExists.username,
+        createdAt: userExists.createdAt
       })
 
       // Hacer el PublicUser

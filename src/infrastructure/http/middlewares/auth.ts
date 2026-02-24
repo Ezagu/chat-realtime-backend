@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import type { TokenService } from "../../../domain/services/TokenService.js";
-import type { AuthPayload } from "../../../domain/types/auth.js";
+import type { PublicUser } from "../../../domain/entities/User.js";
 
 export const authMiddleware = (tokenService: TokenService) => {
   return async(req: Request, res: Response, next: NextFunction) => {
@@ -11,8 +11,8 @@ export const authMiddleware = (tokenService: TokenService) => {
     }
 
     try {
-      const payload: AuthPayload= await tokenService.verify(accessToken);
-      req.user = payload.user
+      const payload: PublicUser = await tokenService.verify(accessToken);
+      req.user = payload
       next()
     } catch (error) {
       return res.status(401).json({ message: "Invalid token" });

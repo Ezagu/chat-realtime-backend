@@ -5,7 +5,7 @@ import type { UserRepository } from "../repositories/UserRepository.js";
 export class GetMyChats {
   constructor(private userRepo: UserRepository, private chatRepo: ChatRepository){}
 
-  execute = async({ identityId }: { identityId: string }) => {
+  execute = async(identityId: string) => {
     // Validar que exista el usuario
     const user = await this.userRepo.findById(identityId)
     if(!user) throw new UserNotFoundError()
