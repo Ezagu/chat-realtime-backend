@@ -6,8 +6,9 @@ export type CreateMessage = {
 
 export type Message = {
   readonly id: string
-  createdAt: number
+  createdAt: Date
   content: string
   chatId: string
   userId: string
+  read: boolean
 } 

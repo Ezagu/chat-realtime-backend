@@ -8,10 +8,10 @@ export class CreateChat {
 
   execute = async({ identityId, friendId }: { identityId: string, friendId: string }) => {
     // Validar que los usuarios existan
-    const identity = await this.userRepo.findById({ userId: identityId })
+    const identity = await this.userRepo.findById(identityId)
     if(!identity) throw new UserNotFoundError()
 
-    const friend = await this.userRepo.findById({ userId: friendId })
+    const friend = await this.userRepo.findById(friendId)
     if(!friend) throw new UserNotFoundError()
 
     // Validar que no exista un chat entre los mismos usuarios

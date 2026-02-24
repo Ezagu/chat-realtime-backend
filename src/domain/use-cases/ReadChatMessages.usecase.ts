@@ -10,15 +10,19 @@ export class ReadChatMessages {
 
   execute = async({ chatId, identityId }: { chatId: string, identityId: string }) => {
     // Validar que exista el chat
-    const chat = await this.chatRepo.findById({ chatId })
+    const chat = await this.chatRepo.findById(chatId)
     if(!chat) throw new ChatNotFoundError()
 
     // Validar que exista el usuario
-    const user = await this.userRepo.findById({ userId: identityId })
+    const user = await this.userRepo.findById(identityId)
     if(!user) throw new UserNotFoundError()
 
     // Validar que el usuario pertenezca al chat
-    if(!chat.members.includes(identityId)) throw new ForbiddenChatAccessError()
+    let belongsToChat = false
+    chat.users.forEach(user => {
+      if(user.id === identityId) belongsToChat = true
+    })
+    if(!belongsToChat) throw new ForbiddenChatAccessError()
 
     this.chatRepo.readAllMessages({ chatId, identityId })
   }

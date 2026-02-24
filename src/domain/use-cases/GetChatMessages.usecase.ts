@@ -7,7 +7,7 @@ export class GetChatMessages {
 
   execute = async({ chatId }: { chatId: string }) => {
     // Validar que exista el chat
-    const chat = await this.chatRepo.findById({ chatId })
+    const chat = await this.chatRepo.findById(chatId)
     if(!chat) throw new ChatNotFoundError()
 
     // Buscar los mensajes

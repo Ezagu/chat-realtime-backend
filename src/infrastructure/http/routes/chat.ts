@@ -6,9 +6,7 @@ export const chatRouter = (
   auth: express.RequestHandler
 ) => {
   const router = Router()
-
-  router.post('/', auth)
-
+  
   router.get('/', auth)
   router.get('/:id/messages', auth)
   

@@ -7,9 +7,9 @@ export class GetMyChats {
 
   execute = async({ identityId }: { identityId: string }) => {
     // Validar que exista el usuario
-    const user = await this.userRepo.findById({ userId: identityId })
+    const user = await this.userRepo.findById(identityId)
     if(!user) throw new UserNotFoundError()
 
-    return await this.chatRepo.findByUser({ userId: identityId })
+    return await this.chatRepo.findByUser(identityId)
   }
 }

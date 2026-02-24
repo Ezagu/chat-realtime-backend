@@ -11,17 +11,19 @@ export class SendMessage {
 
   execute = async(message: CreateMessage) => {
     // Validar que exista el chat
-    const chat = await this.chatRepo.findById({ chatId: message.chatId })
+    const chat = await this.chatRepo.findById(message.chatId)
     if(!chat) throw new ChatNotFoundError()
 
     // Validar que exista el usuario
-    const user = await this.userRepo.findById({ userId: message.userId })
+    const user = await this.userRepo.findById(message.userId)
     if(!user) throw new UserNotFoundError()
 
     // Validar que el usuario sea parte del chat
-    if(!chat.members.includes(message.userId)) throw new ForbiddenChatAccessError()
-
-    // TODO: VALIDAR MENSAJE
+    let belongsToChat = false
+    chat.users.forEach(user => {
+      if(user.id === message.userId) belongsToChat = true
+    })
+    if(!belongsToChat) throw new ForbiddenChatAccessError()
 
     // Crear mensaje
     this.messageRepo.create(message)
