@@ -9,6 +9,6 @@ export const setupRoutes = (
   {app: express.Application, userController: UserController}
 ) => {
   app.use('/users', userRouter(userController))
-  app.use('/chats', chatRouter())
-  app.use('/messages', messageRouter())
+  //app.use('/chats', chatRouter())
+  //app.use('/messages', messageRouter())
 } 

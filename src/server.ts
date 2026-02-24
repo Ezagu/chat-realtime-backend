@@ -1,21 +1,21 @@
 import express from "express"
-import dotenv from "dotenv/config"
+import "dotenv/config"
 import { setupRoutes } from "./infrastructure/http/setup.js"
 import { UserController } from "./infrastructure/http/controllers/user.js";
 import { RegisterUser } from "./domain/use-cases/RegisterUser.usecase.js";
-import { PgUserRepository } from "./infrastructure/db/repositories/PgUserRepository.js";
 import { LoginUser } from "./domain/use-cases/LoginUser.usecase.js";
 import { GetUsers } from "./domain/use-cases/GetUsers.usecase.js";
 import { SearchUsers } from "./domain/use-cases/SearchUsers.usecase.js";
 import { BcryptPasswordHasher } from "./utils/BcryptPasswordHasher.js";
 import { JwtTokenService } from "./utils/JwtTokenService.js";
+import { PrismaUserRepository } from "./infrastructure/db/repositories/PrismaUserRepository.js";
 
 const app = express()
 const PORT = 3900;
 
 app.use(express.json())
 
-const userRepo = new PgUserRepository()
+const userRepo = new PrismaUserRepository()
 
 const passwordHasher = new BcryptPasswordHasher()
 const tokenService = new JwtTokenService(process.env.JWT_SECRET!)

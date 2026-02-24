@@ -11,13 +11,13 @@ export type UserLogin = {
 export type PublicUser = {
   readonly id: string
   username: string
-  createdAt: number
+  createdAt: Date
 }
 
 export type User = {
   readonly id: string
   username: string
   password: string
-  createdAt: number
+  createdAt: Date
 }
 
