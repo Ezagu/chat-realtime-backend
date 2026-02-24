@@ -4,6 +4,7 @@ import { InvalidPasswordError } from "../errors/InvalidPasswordError.js"
 import { UserNotFoundError } from "../errors/UserNotFoundError.js"
 import type { PasswordHasher } from "../services/PasswordHasher.js"
 import type { TokenService } from "../services/TokenService.js"
+import type { AuthPayload } from "../types/auth.js"
 
 export class LoginUser{
   constructor(
@@ -12,7 +13,7 @@ export class LoginUser{
     private readonly tokenService: TokenService
   ){}
 
-  execute = async(user: UserLogin) => {
+  execute = async(user: UserLogin): Promise<AuthPayload> => {
       // Validar que exista el usuario
       const userExists = await this.userRepo.findByUsername(user.username)
       if(!userExists) throw new UserNotFoundError()

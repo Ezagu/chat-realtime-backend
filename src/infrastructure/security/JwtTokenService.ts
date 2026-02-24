@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import type { TokenService } from "../domain/services/TokenService.js";
+import type { TokenService } from "../../domain/services/TokenService.js";
 
 export class JwtTokenService implements TokenService {
   constructor(
@@ -11,6 +11,7 @@ export class JwtTokenService implements TokenService {
   }
 
   verify = async (token: string) => {
+    console.log(token)
     return jwt.verify(token, this.secret)
   }
 }

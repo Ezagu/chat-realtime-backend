@@ -55,7 +55,7 @@ export class UserController {
 
     try {
       const loginData = await this.loginUser.execute(validation.data)
-      res.cookie('access-token', loginData.accessToken, {
+      res.cookie('accessToken', loginData.accessToken, {
         httpOnly: true,
         maxAge: 1000 * 60 * 60
       }).json({
@@ -68,6 +68,10 @@ export class UserController {
         return res.status(500).send('Internal Server Error')
       }
     }
+  }
+
+  logout = async (req: Request, res: Response) => {
+    res.clearCookie('accessToken').send('Logout succesful!')
   }
 
   find = async (req: Request, res: Response) => {
