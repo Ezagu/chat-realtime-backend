@@ -1,5 +1,7 @@
+import type { PublicUser } from "./User.js"
+
 export type Chat = {
   readonly id: string
-  createdAt: number,
-  members: string[]
+  createdAt: Date,
+  users: PublicUser[]
 }

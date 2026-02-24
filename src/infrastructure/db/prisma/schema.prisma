@@ -37,4 +37,5 @@ model Message {
   user      User @relation(fields: [userId], references: [id])
   chatId    String
   chat      Chat @relation(fields: [chatId], references: [id])
+  read      Boolean @default(false)
 }
