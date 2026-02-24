@@ -19,29 +19,22 @@ export class PrismaUserRepository implements UserRepository {
     return await prisma.user.findMany({
       where: {
         username: {
-          contains: search
+          contains: search,
+          mode: "insensitive"
         }
       }
     })
   }
 
   findByUsername = async (username: string) => {
-    return await prisma.user.findFirst({
-      where: {
-        username: {
-          equals: username
-        }
-      }
+    return await prisma.user.findUnique({
+      where: {username}
     })
   }
 
   findById = async (id: string) => {
-    return await prisma.user.findFirst({
-      where: {
-        id: {
-          equals: id
-        }
-      }
+    return await prisma.user.findUnique({
+      where: {id}
     })
   }
 }

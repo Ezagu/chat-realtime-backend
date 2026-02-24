@@ -14,7 +14,7 @@ export class LoginUser{
 
   execute = async(user: UserLogin) => {
       // Validar que exista el usuario
-      const userExists: User = await this.userRepo.findByUsername({ username: user.username })
+      const userExists = await this.userRepo.findByUsername(user.username)
       if(!userExists) throw new UserNotFoundError()
   
       // Comparar contraseñas
@@ -27,10 +27,13 @@ export class LoginUser{
         username: userExists.username
       })
 
+      // Hacer el PublicUser
+      const {password, ...publicUser} = userExists
+
       //Devolver token y usuario
       return {
         accessToken,
-        user: userExists
+        user: publicUser
       }
     }
 }

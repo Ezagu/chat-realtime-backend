@@ -71,9 +71,17 @@ export class UserController {
   }
 
   find = async (req: Request, res: Response) => {
-  }
-
-  findById = async (req: Request, res: Response) => {
-    
+    const search = req.query.search
+    try {
+      let users = []
+      if(search && typeof search === 'string') {
+        users = await this.searchUsers.execute(search)
+      } else {
+        users = await this.getUsers.execute()
+      } 
+      return res.json(users)
+    } catch(error) {
+      return res.status(500).send('Internal Server Error')
+    }
   }
 }
