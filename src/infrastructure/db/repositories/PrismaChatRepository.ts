@@ -1,4 +1,3 @@
-import type { Chat } from "../../../domain/entities/Chat.js";
 import type { ChatRepository } from "../../../domain/repositories/ChatRepository.js";
 import { prisma } from "../prisma/prisma.js";
 
@@ -7,35 +6,25 @@ export class PrismaChatRepository implements ChatRepository {
 
   create = async ({ identityId, friendId }: { identityId: string, friendId: string }) => {
     return await prisma.chat.create({
-      data: {
-        users: {
-          connect: [
-            {id: identityId},
-            {id: friendId}
-          ]
-        }
-      }
+      data: {users: {
+        connect: [
+          {id: identityId},
+          {id: friendId}
+        ]
+      }}
     })
   }
 
   findByUser = async (userId: string) => {
     return await prisma.chat.findMany({
-      where: {
-        users: {
-          some: {
-            id: userId
-          }
+      where: { users: { some: { id: userId }}},
+      include: { users: {
+        select: {
+          username: true,
+          id: true,
+          createdAt: true
         }
-      },
-      include: {
-        users: {
-          select: {
-            username: true,
-            id: true,
-            createdAt: true
-          }
-        }
-      }
+      }}
     })
   }
 
@@ -43,13 +32,12 @@ export class PrismaChatRepository implements ChatRepository {
     return await prisma.chat.findUnique({
       where: { id: chatId },
       include: {users: {
-          select: {
-            username: true,
-            id: true,
-            createdAt: true
-          }
+        select: {
+          username: true,
+          id: true,
+          createdAt: true
         }
-      }
+      }}
     })
   };
 

@@ -1,1 +1,0 @@
-// Entrar a cada room por cada chat

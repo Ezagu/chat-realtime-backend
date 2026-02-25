@@ -17,12 +17,10 @@ export class PrismaUserRepository implements UserRepository {
 
   search = async (search: string) => {
     return await prisma.user.findMany({
-      where: {
-        username: {
-          contains: search,
-          mode: "insensitive"
-        }
-      }
+      where: { username: { 
+        contains: search,
+        mode: "insensitive"
+      }}
     })
   }
 

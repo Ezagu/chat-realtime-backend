@@ -1,6 +1,3 @@
 import type { PublicUser } from "../entities/User.js"
 
-type AuthPayload = {
-  accessToken: string
-  user: PublicUser
-}
+type AuthPayload = PublicUser & {iat: number, exp: number}

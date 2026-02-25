@@ -44,7 +44,6 @@ export class UserController {
 
   login = async (req: Request, res: Response) => {
     const user: UserLogin = req.body
-
     // Validar datos
     const validation = validateUser(user);
     if (validation.error) {
