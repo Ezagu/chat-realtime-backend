@@ -1,13 +1,41 @@
 import type { Server, Socket } from "socket.io";
-import type { MessageSend, SocketData } from "../../types/socket.js";
+import type { SocketData, SocketEventHandler } from "../../types/socket.js";
+import { validateMessageSend } from "../schemas/message.js";
+import type { CreateMessage } from "../../../domain/use-cases/CreateMessage.usecase.js";
+import { ChatNotFoundError } from "../../../domain/errors/ChatNotFoundError.js";
+import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError.js";
+import { ForbiddenChatAccessError } from "../../../domain/errors/ForbiddenChatAccessError.js";
+import type { SendMessageDto } from "../../../domain/entities/Message.js";
 
-export const messageEventHandler = (io: Server, socket: Socket<any, any, any, SocketData>) => {
-  socket.on('message:send', (message: MessageSend) => {
-    console.log(`Mensaje de ${socket.data.user.username} recibido: ${message.content}, para ${message.toUser}`)
-    // VALIDAR DATOS
+export const createMessageEventHandler = (createMessage: CreateMessage): SocketEventHandler => {
+  return (io, socket) => {
+    socket.on('message:send', async (dto, callback) => {
+      // VALIDAR DATOS
+      const validation = validateMessageSend(dto)
+      if(validation.error) return callback({ error: 'Invalid Data' })
 
-    // GUARDAR EN BASE DE DATOS
+      // GUARDAR EN BASE DE DATOS
+      try {
+        const result = await createMessage.execute({...validation.data, userId: socket.data.user.id})
 
-    // NOTIFICAR A LOS DOS USUARIOS QUE HAY UN MENSAJE NUEVO
-  })
+        // EMITIR MENSAJE NUEVO A CADA PARTICIPANTE EN SU ROOM
+        result.participants.forEach(user => {
+          io.to(`user:${user.id}`).emit('message:new', result.message)
+        })
+
+        callback({ success: true })
+      } catch (error) {
+        if(error instanceof ChatNotFoundError) {
+          return callback({error: error.message})
+        }
+        if(error instanceof UserNotFoundError) {
+          return callback({error: error.message})
+        }
+        if(error instanceof ForbiddenChatAccessError) {
+          return callback({error: error.message})
+        }
+        return callback({error: 'Internal Server Error'})
+      }
+    })
+  } 
 }

@@ -21,6 +21,8 @@ import { GetMyChats } from "./domain/use-cases/GetMyChats.usecase.js";
 import { GetChatMessages } from "./domain/use-cases/GetChatMessages.usecase.js";
 import { PrismaMessageRepository } from "./infrastructure/db/repositories/PrismaMessageRepository.js";
 import { setupSocket } from "./infrastructure/websocket/setup.js";
+import { createMessageEventHandler } from "./infrastructure/websocket/events/message.events.js";
+import { CreateMessage } from "./domain/use-cases/CreateMessage.usecase.js";
 
 const userRepo = new PrismaUserRepository()
 const chatRepo = new PrismaChatRepository()
@@ -36,6 +38,8 @@ const searchUsers = new SearchUsers(userRepo)
 
 const getMyChats = new GetMyChats(userRepo, chatRepo)
 const getChatMessage = new GetChatMessages(messageRepo, chatRepo)
+
+const createMessage = new CreateMessage(messageRepo, chatRepo, userRepo)
 
 // HTTP
 const app = express()
@@ -63,7 +67,9 @@ const io = new Server(server, {
   }
 })
 
-setupSocket({ io, tokenService })
+const messageEventHandler = createMessageEventHandler(createMessage);
+
+setupSocket({ io, tokenService, messageEventHandler })
 
 const PORT = process.env.PORT || 3900
 

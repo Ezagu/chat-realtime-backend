@@ -1,4 +1,4 @@
-import type { CreateMessage } from "../entities/Message.js";
+import type { CreateMessageInput } from "../entities/Message.js";
 import { ChatNotFoundError } from "../errors/ChatNotFoundError.js";
 import { ForbiddenChatAccessError } from "../errors/ForbiddenChatAccessError.js";
 import { UserNotFoundError } from "../errors/UserNotFoundError.js";
@@ -6,10 +6,10 @@ import type { ChatRepository } from "../repositories/ChatRepository.js";
 import type { MessageRepository } from "../repositories/MessageRepository.js";
 import type { UserRepository } from "../repositories/UserRepository.js";
 
-export class SendMessage {
+export class CreateMessage {
   constructor(private messageRepo: MessageRepository, private chatRepo: ChatRepository, private userRepo: UserRepository){}
 
-  execute = async(message: CreateMessage) => {
+  execute = async(message: CreateMessageInput) => {
     // Validar que exista el chat
     const chat = await this.chatRepo.findById(message.chatId)
     if(!chat) throw new ChatNotFoundError()
@@ -26,6 +26,9 @@ export class SendMessage {
     if(!belongsToChat) throw new ForbiddenChatAccessError()
 
     // Crear mensaje
-    this.messageRepo.create(message)
+    return {
+      message: this.messageRepo.create(message),
+      participants: chat.users
+    }
   }
 }
