@@ -43,7 +43,7 @@ export class PrismaChatRepository implements ChatRepository {
 
   readAllMessages = async ({ chatId, identityId }: { chatId: string; identityId: string; }) => {
     await prisma.message.updateMany({
-      where: {chatId, userId: identityId},
+      where: {chatId, userId: identityId, read: false},
       data: { read: true }
     })
   }

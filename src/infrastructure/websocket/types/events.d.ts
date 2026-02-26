@@ -5,6 +5,10 @@ export interface ClientToServerEvents {
     dto: SendMessageDto,
     callback: (response: {success: boolean} | {error: string}) => void
   ) => void
+  "chat:read": (
+    chatId: string,
+    callback: (response: {success: boolean} | {error: string}) => void
+  ) => void
 }
 
 export interface ServerToClientEvents {

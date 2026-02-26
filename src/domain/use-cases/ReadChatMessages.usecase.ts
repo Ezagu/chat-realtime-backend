@@ -25,5 +25,9 @@ export class ReadChatMessages {
     if(!belongsToChat) throw new ForbiddenChatAccessError()
 
     this.chatRepo.readAllMessages({ chatId, identityId })
+
+    return {
+      participants: chat.users
+    }
   }
 }
