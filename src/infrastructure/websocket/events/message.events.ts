@@ -1,11 +1,9 @@
-import type { Server, Socket } from "socket.io";
-import type { SocketData, SocketEventHandler } from "../../types/socket.js";
+import type { SocketEventHandler } from "../../types/socket.js";
 import { validateMessageSend } from "../schemas/message.js";
 import type { CreateMessage } from "../../../domain/use-cases/CreateMessage.usecase.js";
 import { ChatNotFoundError } from "../../../domain/errors/ChatNotFoundError.js";
 import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError.js";
 import { ForbiddenChatAccessError } from "../../../domain/errors/ForbiddenChatAccessError.js";
-import type { SendMessageDto } from "../../../domain/entities/Message.js";
 
 export const createMessageEventHandler = (createMessage: CreateMessage): SocketEventHandler => {
   return (io, socket) => {
@@ -23,7 +21,7 @@ export const createMessageEventHandler = (createMessage: CreateMessage): SocketE
           io.to(`user:${user.id}`).emit('message:new', result.message)
         })
 
-        callback({ success: true })
+        return callback({ success: true })
       } catch (error) {
         if(error instanceof ChatNotFoundError) {
           return callback({error: error.message})

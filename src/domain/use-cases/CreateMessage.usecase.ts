@@ -27,7 +27,7 @@ export class CreateMessage {
 
     // Crear mensaje
     return {
-      message: this.messageRepo.create(message),
+      message: await this.messageRepo.create(message),
       participants: chat.users
     }
   }

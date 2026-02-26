@@ -23,6 +23,7 @@ import { PrismaMessageRepository } from "./infrastructure/db/repositories/Prisma
 import { setupSocket } from "./infrastructure/websocket/setup.js";
 import { createMessageEventHandler } from "./infrastructure/websocket/events/message.events.js";
 import { CreateMessage } from "./domain/use-cases/CreateMessage.usecase.js";
+import { createPresenceEventHandler } from "./infrastructure/websocket/events/presence.events.js";
 
 const userRepo = new PrismaUserRepository()
 const chatRepo = new PrismaChatRepository()
@@ -68,8 +69,9 @@ const io = new Server(server, {
 })
 
 const messageEventHandler = createMessageEventHandler(createMessage);
+const presenceEventHandler = createPresenceEventHandler()
 
-setupSocket({ io, tokenService, messageEventHandler })
+setupSocket({ io, tokenService, messageEventHandler, presenceEventHandler })
 
 const PORT = process.env.PORT || 3900
 

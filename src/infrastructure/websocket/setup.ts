@@ -4,17 +4,18 @@ import { createSocketAuthMiddleware } from "./middlewares/authentication.js";
 import type { SocketData, SocketEventHandler } from "../types/socket.js";
 import { typingEventHandler } from "./events/typing.events.js";
 import { readEventHandler } from "./events/read.events.js";
-import { presenceEventHandler } from "./events/presence.events.js";
 import type { ClientToServerEvents, ServerToClientEvents } from "./types/events.js";
 
 export const setupSocket = async ({ 
   io, 
   tokenService,
-  messageEventHandler
+  messageEventHandler,
+  presenceEventHandler
 }: { 
   io: Server<ClientToServerEvents, ServerToClientEvents, {}, SocketData>, 
   tokenService: TokenService,
-  messageEventHandler: SocketEventHandler
+  messageEventHandler: SocketEventHandler,
+  presenceEventHandler: SocketEventHandler
 }) => {
   // Autenticación
   io.use(createSocketAuthMiddleware(tokenService))

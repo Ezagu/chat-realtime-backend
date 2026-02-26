@@ -3,7 +3,7 @@ import type { Message, SendMessageDto } from "../../domain/entities/Message.js";
 export interface ClientToServerEvents {
   "message:send": (
     dto: SendMessageDto,
-    callback: (response: {success?: boolean; error?: string}) => void
+    callback: (response: {success: boolean} | {error: string}) => void
   ) => void
 }
 
