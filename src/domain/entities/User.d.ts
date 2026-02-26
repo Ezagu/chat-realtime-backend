@@ -1,3 +1,5 @@
+export type UserId = string
+
 export type UserCreate = {
   username: string
   password: string
@@ -9,15 +11,12 @@ export type UserLogin = {
 }
 
 export type PublicUser = {
-  readonly id: string
+  readonly id: UserId
   username: string
   createdAt: Date
 }
 
-export type User = {
-  readonly id: string
-  username: string
+export type User = PublicUser & {
   password: string
-  createdAt: Date
 }
 

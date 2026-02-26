@@ -22,23 +22,6 @@ import { GetChatMessages } from "./domain/use-cases/GetChatMessages.usecase.js";
 import { PrismaMessageRepository } from "./infrastructure/db/repositories/PrismaMessageRepository.js";
 import { setupSocket } from "./infrastructure/websocket/setup.js";
 
-const app = express()
-
-const server = createServer(app)
-const io = new Server(server, {
-  cors: {
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
-  }
-})
-
-app.use(cors({
-  origin: process.env.CORS_ORIGIN,
-  credentials: true
-}))
-app.use(cookieParser())
-app.use(express.json())
-
 const userRepo = new PrismaUserRepository()
 const chatRepo = new PrismaChatRepository()
 const messageRepo = new PrismaMessageRepository()
@@ -54,12 +37,32 @@ const searchUsers = new SearchUsers(userRepo)
 const getMyChats = new GetMyChats(userRepo, chatRepo)
 const getChatMessage = new GetChatMessages(messageRepo, chatRepo)
 
+// HTTP
+const app = express()
+
+app.use(cors({
+  origin: process.env.CORS_ORIGIN,
+  credentials: true
+}))
+app.use(cookieParser())
+app.use(express.json())
+
 const userController = new UserController(registerUser, loginUser, getUsers, searchUsers);
 const chatController = new ChatController(getMyChats, getChatMessage)
 
 const auth = authMiddleware(tokenService)
 
 setupRoutes({ userController, chatController, app, auth });
+
+// SOCKETIO
+const server = createServer(app)
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CORS_ORIGIN,
+    credentials: true
+  }
+})
+
 setupSocket({ io, tokenService })
 
 const PORT = process.env.PORT || 3900

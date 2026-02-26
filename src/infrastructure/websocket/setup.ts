@@ -1,28 +1,34 @@
 import type { Server } from "socket.io";
-import { parseCookie } from "cookie";
 import type { TokenService } from "../../domain/services/TokenService.js";
+import { createSocketAuthMiddleware } from "./middlewares/authentication.js";
+import type { SocketData } from "../types/socket.js";
+import { messageEventHandler } from "./events/message.events.js";
+import { typingEventHandler } from "./events/typing.events.js";
+import { readEventHandler } from "./events/read.events.js";
+import { presenceEventHandler } from "./events/presence.events.js";
 
-export const setupSocket = ({ io, tokenService } : { io: Server, tokenService: TokenService }) => {
-  io.use(async (socket, next) => {
-    const cookies = socket.handshake.headers.cookie;
-    if(!cookies || typeof cookies !== 'string') {
-      return next(new Error('Unauthorized'))
-    }
-    const {accessToken} = parseCookie(cookies)
-    if(!accessToken || typeof accessToken !== 'string') {
-      return next(new Error('Unauthorized'))
-    }
-    try {
-      const payload = await tokenService.verify(accessToken)
-      socket.data.user = {username: payload.username, id: payload.id}
-      next()
-    } catch (error) {
-      return next(new Error('Unauthorized'))
-    }
-    
-  })
+export const setupSocket = async ({ 
+  io, 
+  tokenService 
+}: { 
+  io: Server<any, any, any, SocketData>, 
+  tokenService: TokenService 
+}) => {
+  // Autenticación
+  io.use(createSocketAuthMiddleware(tokenService))
 
   io.on('connection', socket => {
-    console.log(`User: ${socket.data.user.username} conectado`)
+    const {id, username} = socket.data.user
+    console.log(`User: ${username} conectado`)
+    socket.join(`user:${id}`)
+
+    // CONEXION A LA ROOM PERSONAL
+    io.to(`user:${id}`).emit('room', {message: `CONECTADO A LA ROOM user:${id}`})
+
+    presenceEventHandler(io, socket)
+    messageEventHandler(io, socket)
+    typingEventHandler(io, socket)
+    readEventHandler(io, socket)
+    
   })
 }
