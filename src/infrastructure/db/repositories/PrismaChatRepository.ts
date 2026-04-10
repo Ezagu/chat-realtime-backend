@@ -18,13 +18,18 @@ export class PrismaChatRepository implements ChatRepository {
   findByUser = async (userId: string) => {
     return await prisma.chat.findMany({
       where: { users: { some: { id: userId }}},
-      include: { users: {
-        select: {
-          username: true,
-          id: true,
-          createdAt: true
+      include: { 
+        users: {
+          select: {
+            username: true,
+            id: true,
+            createdAt: true
+        }},
+        messages: {
+          orderBy: {createdAt: 'desc'},
+          take: 1
         }
-      }}
+      }
     })
   }
 
