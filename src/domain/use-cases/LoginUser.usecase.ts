@@ -1,10 +1,14 @@
-import type { User, UserLogin } from "../entities/User.js"
+import type { PublicUser, UserLogin } from "../entities/User.js"
 import type { UserRepository } from "../repositories/UserRepository.js"
 import { InvalidPasswordError } from "../errors/InvalidPasswordError.js"
 import { UserNotFoundError } from "../errors/UserNotFoundError.js"
 import type { PasswordHasher } from "../services/PasswordHasher.js"
 import type { TokenService } from "../services/TokenService.js"
-import type { AuthPayload } from "../types/auth.js"
+
+type LoginUserResponse = {
+  accessToken: string
+  user: PublicUser
+}
 
 export class LoginUser{
   constructor(
@@ -13,7 +17,7 @@ export class LoginUser{
     private readonly tokenService: TokenService
   ){}
 
-  execute = async(user: UserLogin): Promise<AuthPayload> => {
+  execute = async(user: UserLogin): Promise<LoginUserResponse> => {
       // Validar que exista el usuario
       const userExists = await this.userRepo.findByUsername(user.username)
       if(!userExists) throw new UserNotFoundError()

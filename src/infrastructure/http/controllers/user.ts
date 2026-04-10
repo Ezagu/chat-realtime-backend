@@ -31,13 +31,16 @@ export class UserController {
 
     try {
       // Registrar usuario
-      const userCreated = await this.registerUser.execute(validation.data)
-      return res.status(201).json(userCreated)
+      const response = await this.registerUser.execute(validation.data)
+      return res.status(201).cookie('accessToken', response.accessToken, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60
+      }).json(response.user)
     } catch (error) {
       if(error instanceof UserAlreadyExistsError) {
-        return res.status(409).send(error.message)
+        return res.status(409).json({error: error.message})
       } else {
-        return res.status(500).send('Internal Server Error')
+        return res.status(500).send({error: 'Internal Server Error'})
       }
     }
   }
@@ -57,20 +60,18 @@ export class UserController {
       res.cookie('accessToken', loginData.accessToken, {
         httpOnly: true,
         maxAge: 1000 * 60 * 60
-      }).json({
-        user: loginData.user
-      })
+      }).json(loginData.user)
     } catch (error) {
       if(error instanceof UserNotFoundError || error instanceof InvalidPasswordError) {
-        return res.status(400).send(error.message)
+        return res.status(400).json({error: error.message})
       } else {
-        return res.status(500).send('Internal Server Error')
+        return res.status(500).json({error: 'Internal Server Error'})
       }
     }
   }
 
   logout = async (req: Request, res: Response) => {
-    res.clearCookie('accessToken').send('Logout succesful!')
+    res.clearCookie('accessToken').json({message: 'Logout succesful!'})
   }
 
   find = async (req: Request, res: Response) => {
@@ -84,7 +85,11 @@ export class UserController {
       } 
       return res.json(users)
     } catch(error) {
-      return res.status(500).send('Internal Server Error')
+      return res.status(500).send({error: 'Internal Server Error'})
     }
+  }
+
+  me = async(req: Request, res: Response) => {
+    res.status(200).json(req.user)
   }
 }

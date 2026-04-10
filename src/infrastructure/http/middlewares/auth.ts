@@ -11,8 +11,9 @@ export const authMiddleware = (tokenService: TokenService) => {
     }
 
     try {
-      const payload: PublicUser = await tokenService.verify(accessToken);
-      req.user = payload
+      const payload = await tokenService.verify(accessToken);
+      const {iat, exp, ...user} = payload
+      req.user = user
       next()
     } catch (error) {
       return res.status(401).json({ message: "Invalid token" });

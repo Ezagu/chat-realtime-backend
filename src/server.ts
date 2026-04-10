@@ -34,7 +34,7 @@ const messageRepo = new PrismaMessageRepository()
 const passwordHasher = new BcryptPasswordHasher()
 const tokenService = new JwtTokenService(process.env.JWT_SECRET!)
 
-const registerUser = new RegisterUser(userRepo, passwordHasher);
+const registerUser = new RegisterUser(userRepo, passwordHasher, tokenService);
 const loginUser = new LoginUser(userRepo, passwordHasher, tokenService)
 const getUsers = new GetUsers(userRepo)
 const searchUsers = new SearchUsers(userRepo)
