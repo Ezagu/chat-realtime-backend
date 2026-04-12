@@ -8,9 +8,12 @@ import { ForbiddenChatAccessError } from "../../../domain/errors/ForbiddenChatAc
 export const createMessageEventHandler = (createMessage: CreateMessage): SocketEventHandler => {
   return (io, socket) => {
     socket.on('message:send', async (dto, callback) => {
+      // Si no se envia callback para ack, entonces ejecuta funcion
+      // vacía para que no de errores
+      const ack = typeof callback === 'function' ? callback : () => {}
       // VALIDAR DATOS
       const validation = validateMessageSend(dto)
-      if(validation.error) return callback({ error: 'Invalid Data' })
+      if(validation.error) return ack({ error: 'Invalid Data' })
 
       // GUARDAR EN BASE DE DATOS
       try {
@@ -21,18 +24,12 @@ export const createMessageEventHandler = (createMessage: CreateMessage): SocketE
           io.to(`user:${user.id}`).emit('message:new', result.message)
         })
 
-        return callback({ success: true })
+        return ack({ success: true })
       } catch (error) {
-        if(error instanceof ChatNotFoundError) {
-          return callback({error: error.message})
-        }
-        if(error instanceof UserNotFoundError) {
-          return callback({error: error.message})
-        }
-        if(error instanceof ForbiddenChatAccessError) {
-          return callback({error: error.message})
-        }
-        return callback({error: 'Internal Server Error'})
+        if(error instanceof ChatNotFoundError) return ack({error: error.message})
+        if(error instanceof UserNotFoundError) return ack({error: error.message})
+        if(error instanceof ForbiddenChatAccessError) return ack({error: error.message})
+        return ack({error: 'Internal Server Error'})
       }
     })
   } 

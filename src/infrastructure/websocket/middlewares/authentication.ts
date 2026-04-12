@@ -13,12 +13,16 @@ export const createSocketAuthMiddleware = (tokenService: TokenService) => {
     if(!accessToken || typeof accessToken !== 'string') {
       return next(new Error('Unauthorized'))
     }
+    
     try {
       const payload = await tokenService.verify(accessToken)
-      socket.data.user = {username: payload.username, id: payload.id}
+      socket.data.user = {
+        username: payload.username,
+        id: payload.id
+      }
       next()
     } catch (error) {
-      return next(new Error('Unauthorized'))
+      return next(new Error('Internal Server Error'))
     }
   }
 }

@@ -11,7 +11,6 @@ export class ChatController {
   ){}
 
   findMyChats = async (req: Request, res: Response) => {
-    console.log(req.user)
     try {
       const chats = await this.getMyChats.execute(req.user.id)
       return res.json(chats)

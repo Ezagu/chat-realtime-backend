@@ -6,17 +6,19 @@ export const createPresenceEventHandler = (): SocketEventHandler => {
     const {id, username} = socket.data.user
     addOnlineUser(id)
 
-    // Envia usuarios en linea
-    io.to(`user:${id}`).emit('presence:initial', getOnlineUsers())
+    // Cuando el usuario requiera los usuarios online, se los emite
+    socket.on('presence:get_initial', () => {
+      socket.emit('presence:initial', getOnlineUsers())
+    })
 
     // Emite a los demas que esta en linea
-    io.emit('user:online', { id, username })
+    socket.broadcast.emit('user:online', id)
     
     // Emite a los demas que esta offline
     socket.on('disconnect', () => {
       console.log(`Usuario ${username} desconectado`)
       removeOnlineUser(id)
-      io.emit('user:offline', { id, username })
+      io.emit('user:offline', id)
     })
   }
 }
