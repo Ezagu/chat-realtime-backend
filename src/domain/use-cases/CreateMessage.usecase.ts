@@ -1,6 +1,4 @@
-import type { CreateMessageInput } from "../entities/Message.js";
-import { ChatNotFoundError } from "../errors/ChatNotFoundError.js";
-import { ForbiddenChatAccessError } from "../errors/ForbiddenChatAccessError.js";
+import type { SendMessageInput } from "../entities/Message.js";
 import { UserNotFoundError } from "../errors/UserNotFoundError.js";
 import type { ChatRepository } from "../repositories/ChatRepository.js";
 import type { MessageRepository } from "../repositories/MessageRepository.js";
@@ -9,26 +7,36 @@ import type { UserRepository } from "../repositories/UserRepository.js";
 export class CreateMessage {
   constructor(private messageRepo: MessageRepository, private chatRepo: ChatRepository, private userRepo: UserRepository){}
 
-  execute = async(message: CreateMessageInput) => {
+  execute = async(message: SendMessageInput) => {
+    // Validar que existan los usuarios
+    const fromUser = await this.userRepo.findById(message.fromUserId)
+    const toUser = await this.userRepo.findById(message.toUserId)
+
+    if(!fromUser || !toUser) throw new UserNotFoundError()
+
     // Validar que exista el chat
-    const chat = await this.chatRepo.findById(message.chatId)
-    if(!chat) throw new ChatNotFoundError()
+    let chat = await this.chatRepo.findByMembers({identityId: message.fromUserId, friendId: message.toUserId})
 
-    // Validar que exista el usuario
-    const user = await this.userRepo.findById(message.userId)
-    if(!user) throw new UserNotFoundError()
+    if(!chat) {
+      // Si no existe el chat, crearlo
+      chat = await this.chatRepo.create({identityId: message.fromUserId, friendId: message.toUserId})
+    }
 
-    // Validar que el usuario sea parte del chat
-    let belongsToChat = false
-    chat.users.forEach(user => {
-      if(user.id === message.userId) belongsToChat = true
-    })
-    if(!belongsToChat) throw new ForbiddenChatAccessError()
+    if(!chat) throw new Error('Chat could not be created')
 
     // Crear mensaje
+    const messageCreated = await this.messageRepo.create({
+      text: message.text,
+      fromUserId: message.fromUserId,
+      chatId: chat.id
+    })
+
     return {
-      message: await this.messageRepo.create(message),
-      participants: chat.users
+      message: messageCreated,
+      chat: {
+        ...chat,
+        messages: [messageCreated]
+      }
     }
   }
 }

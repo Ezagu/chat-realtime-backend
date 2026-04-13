@@ -1,9 +1,7 @@
 import type { ChatRepository } from "../../../domain/repositories/ChatRepository.js";
 import { prisma } from "../prisma/prisma.js";
 
-
 export class PrismaChatRepository implements ChatRepository {
-
   create = async ({ identityId, friendId }: { identityId: string, friendId: string }) => {
     return await prisma.chat.create({
       data: {users: {
@@ -11,7 +9,16 @@ export class PrismaChatRepository implements ChatRepository {
           {id: identityId},
           {id: friendId}
         ]
-      }}
+      }},
+      include: {
+        users: {
+          select: {
+            username: true,
+            id: true,
+            createdAt: true
+          }
+        }
+      }
     })
   }
 

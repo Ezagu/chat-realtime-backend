@@ -7,21 +7,25 @@ import { ForbiddenChatAccessError } from "../../../domain/errors/ForbiddenChatAc
 
 export const createMessageEventHandler = (createMessage: CreateMessage): SocketEventHandler => {
   return (io, socket) => {
-    socket.on('message:send', async (dto, callback) => {
+    socket.on('message:send', async (payload, callback) => {
       // Si no se envia callback para ack, entonces ejecuta funcion
       // vacía para que no de errores
       const ack = typeof callback === 'function' ? callback : () => {}
       // VALIDAR DATOS
-      const validation = validateMessageSend(dto)
+      const validation = validateMessageSend(payload)
       if(validation.error) return ack({ error: 'Invalid Data' })
 
       // GUARDAR EN BASE DE DATOS
       try {
-        const result = await createMessage.execute({...validation.data, userId: socket.data.user.id})
+        const result = await createMessage.execute({
+          fromUserId: socket.data.user.id, 
+          toUserId: payload.toUserId, 
+          text: payload.text
+        })
 
         // EMITIR MENSAJE NUEVO A CADA PARTICIPANTE EN SU ROOM
-        result.participants.forEach(user => {
-          io.to(`user:${user.id}`).emit('message:new', result.message)
+        result.chat.users.forEach(user => {
+          io.to(`user:${user.id}`).emit('message:new', result)
         })
 
         return ack({ success: true })

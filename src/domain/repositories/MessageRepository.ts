@@ -1,6 +1,6 @@
-import type { CreateMessage, Message } from "../entities/Message.js";
+import type { CreateMessageData, Message } from "../entities/Message.js";
 
 export interface MessageRepository {
-  create: (message: CreateMessage) => Promise<Message>
+  create: (message: CreateMessageData) => Promise<Message>
   findByChat: (chatId: string) => Promise<Message[]>
 }

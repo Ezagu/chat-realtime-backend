@@ -1,8 +1,9 @@
+import type { CreateMessageInput, SendMessagePayload } from "../../../domain/entities/Message.js";
 import type { Message, SendMessageDto } from "../../domain/entities/Message.js";
 
 export interface ClientToServerEvents {
   "message:send": (
-    dto: SendMessageDto,
+    dto: SendMessagePayload,
     callback: (response: {success: boolean} | {error: string}) => void
   ) => void
   "chat:read": (

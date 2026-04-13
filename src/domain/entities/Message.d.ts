@@ -1,16 +1,5 @@
 import type { UserId } from "./User.js"
 
-export type SendMessageDto = {
-  content: string
-  chatId: string
-}
-
-export type CreateMessageInput = {
-  userId: UserId
-  content: string
-  chatId: string
-}
-
 export type Message = {
   readonly id: string
   createdAt: Date
@@ -19,3 +8,20 @@ export type Message = {
   userId: UserId
   read: boolean
 } 
+
+export type SendMessagePayload = {
+  text: string,
+  toUserId: string
+}
+
+export type SendMessageInput = {
+  text: string,
+  toUserId: string,
+  fromUserId: string
+}
+
+export type CreateMessageData = {
+  text: string,
+  fromUserId: string,
+  chatId: string
+}
