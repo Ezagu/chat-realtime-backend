@@ -7,29 +7,28 @@ import type { SocketEventHandler } from "../../types/socket.js";
 export const createReadEventHandler = (readChatMessages: ReadChatMessages): SocketEventHandler => {
   return (io, socket) => {
     socket.on('chat:read', async (chatId, callback) => {
+      const ack = typeof callback === 'function' ? callback : () => {}
       // LEER CHATS
       try {
         const { participants } = await readChatMessages.execute({chatId, identityId: socket.data.user.id})
-
         // EMITIR A USUARIO DEL CHAT QUE SUS MENSAJES FUERON VISTOS
         participants.forEach(user => {
           if(user.id !== socket.data.user.id) {
-            io.to(`user:${user.id}`).emit('chat:read', {chatId})
+            io.to(`user:${user.id}`).emit('chat:read', chatId)
           }
         })
-
-        return callback({success: true})
+        return ack({success: true})
       } catch (error) {
         if(error instanceof ChatNotFoundError) {
-          return callback({error: error.message})
+          return ack({error: error.message})
         }
         if(error instanceof UserNotFoundError) {
-          return callback({error: error.message})
+          return ack({error: error.message})
         }
         if(error instanceof ForbiddenChatAccessError) {
-          return callback({error: error.message})
+          return ack({error: error.message})
         }
-        return callback({error: 'Internal Server Error'})
+        return ack({error: 'Internal Server Error'})
       }
     })
   }
