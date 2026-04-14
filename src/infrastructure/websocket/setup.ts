@@ -2,7 +2,6 @@ import type { Server } from "socket.io";
 import type { TokenService } from "../../domain/services/TokenService.js";
 import { createSocketAuthMiddleware } from "./middlewares/authentication.js";
 import type { SocketData, SocketEventHandler } from "../types/socket.js";
-import { typingEventHandler } from "./events/typing.events.js";
 import type { ClientToServerEvents, ServerToClientEvents } from "./types/events.js";
 
 export const setupSocket = async ({ 
@@ -30,7 +29,6 @@ export const setupSocket = async ({
 
     messageEventHandler(io, socket)
     presenceEventHandler(io, socket)
-    typingEventHandler(io, socket)
     readEventHandler(io, socket)
   })
 }
