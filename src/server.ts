@@ -79,6 +79,6 @@ setupSocket({ io, tokenService, messageEventHandler, presenceEventHandler, readE
 
 const PORT = process.env.PORT || 3900
 
-server.listen(3900, () => {
+server.listen(PORT, () => {
   console.log(`Server listening on port: http://localhost:${PORT}`)
 })
