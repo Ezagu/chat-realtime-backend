@@ -34,6 +34,8 @@ export class UserController {
       const response = await this.registerUser.execute(validation.data)
       return res.status(201).cookie('accessToken', response.accessToken, {
         httpOnly: true,
+        secure: true,
+        sameSite: "none",
         maxAge: 1000 * 60 * 60
       }).json(response.user)
     } catch (error) {
@@ -59,6 +61,8 @@ export class UserController {
       const loginData = await this.loginUser.execute(validation.data)
       res.cookie('accessToken', loginData.accessToken, {
         httpOnly: true,
+        secure: true,
+        sameSite: "none",
         maxAge: 1000 * 60 * 60
       }).json(loginData.user)
     } catch (error) {
