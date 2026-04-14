@@ -7,7 +7,7 @@
     "tsc": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/server.ts",
-    "build": "prisma generate && prisma migrate deploy",
+    "build": "npx prisma generate && npx prisma migrate deploy",
     "start": "node src/index.js"
   },
   "keywords": [],
@@ -24,6 +24,7 @@
     "express": "5.2.1",
     "jsonwebtoken": "9.0.3",
     "pg": "8.18.0",
+    "prisma": "^7.7.0",
     "socket.io": "4.8.3",
     "zod": "4.3.6"
   },
@@ -35,7 +36,6 @@
     "@types/pg": "8.16.0",
     "@types/socket.io": "3.0.1",
     "dotenv": "17.3.1",
-    "prisma": "7.4.1",
     "tsx": "4.21.0",
     "typescript": "5.9.3"
   }
