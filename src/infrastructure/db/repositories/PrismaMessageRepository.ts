@@ -17,7 +17,7 @@ export class PrismaMessageRepository implements MessageRepository {
     return await prisma.message.findMany({
       where: {chatId},
       orderBy: {
-        createdAt: 'asc'
+        createdAt: 'desc'
       }
     })
   };
